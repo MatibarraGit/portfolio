@@ -1,5 +1,6 @@
 ---
-
+import { Font } from 'astro:assets';
+import '../styles/global.css'
 ---
 
 <html lang="en">
@@ -8,10 +9,13 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
 		<title>Astro</title>
+		<Font cssVariable='--font-grotesk' preload />
+		<Font cssVariable='--font-jet-brains' preload />
 	</head>
 	<body>
 		<h1>Astro</h1>
+		<h3 class="">Portfolio</h3>
+		<h3 class="brains-mono">Matías Ibarra</h3>
 	</body>
 </html>
