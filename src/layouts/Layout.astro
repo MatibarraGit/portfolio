@@ -1,0 +1,48 @@
+---
+import { Font } from "astro:assets";
+import { DESCRIPTION, TITLE } from "../config/site";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = TITLE, description = DESCRIPTION } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="scroll-pt-16 lg:scroll-pt-20">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <Font cssVariable="--font-grotesk" preload />
+    <Font cssVariable="--font-jet-brains" preload />
+
+    <!-- Corre antes del primer paint para evitar el flash de tema claro -->
+    <script is:inline>
+      const applyTheme = () => {
+        let saved = null;
+        try { saved = localStorage.getItem('theme'); } catch {}
+        const theme =
+          saved === 'light' || saved === 'dark'
+            ? saved
+            : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      };
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
+    </script>
+  </head>
+
+  <body class="min-h-dvh bg-canvas font-sans text-ink antialiased">
+    <slot />
+  </body>
+</html>

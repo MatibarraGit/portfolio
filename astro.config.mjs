@@ -3,11 +3,15 @@ import { defineConfig, fontProviders } from "astro/config";
 
 import tailwindcss from "@tailwindcss/vite";
 
+import sitemap from "@astrojs/sitemap";
+import { SITE_URL } from "./src/config/site";
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+
   fonts: [
     {
       name: "Jet Brains Mono",
@@ -38,4 +42,7 @@ export default defineConfig({
       },
     },
   ],
+
+  site: SITE_URL,
+  integrations: [sitemap()],
 });

@@ -1,0 +1,38 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  title="Cambiar tema"
+  class:list={["btn-icon", className]}
+>
+  <span class="contents dark:hidden">
+    <Icon name="moon" />
+    <span class="sr-only">Activar tema oscuro</span>
+  </span>
+
+  <span class="hidden dark:contents">
+    <Icon name="sun" />
+    <span class="sr-only">Activar tema claro</span>
+  </span>
+</button>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      // classList.toggle devuelve true si la clase quedó puesta
+      const isDark = document.documentElement.classList.toggle("dark");
+      const theme = isDark ? "dark" : "light";
+
+      document.documentElement.style.colorScheme = theme;
+      localStorage.setItem("theme", theme);
+    });
+  });
+</script>

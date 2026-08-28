@@ -1,0 +1,127 @@
+---
+import { CONTACT_METHODS, HERO, NAV_LINKS, WHATSAPP_URL } from "../config/site";
+import Icon from "./Icon.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<header class="sticky top-0 z-50 w-full border-b border-line bg-canvas/90 backdrop-blur">
+  <div class="shell flex h-header items-center justify-between gap-4">
+    <a href="#top" class="shrink-0 font-mono text-lg font-bold tracking-tight text-accent sm:text-xl">
+      {HERO.name}
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-6 xl:gap-8">
+        {
+          NAV_LINKS.map((link) => (
+            <li>
+              <a href={link.href} class="nav-link">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex shrink-0 items-center gap-1 sm:gap-2">
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp"
+        class="btn-icon hidden sm:inline-flex"
+      >
+        <Icon name="whatsapp" />
+      </a>
+      <a
+        href={CONTACT_METHODS.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="LinkedIn"
+        class="btn-icon hidden sm:inline-flex"
+      >
+        <Icon name="linkedin" />
+      </a>
+
+      <ThemeToggle />
+
+      <button
+        type="button"
+        data-menu-toggle
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="btn-icon lg:hidden"
+      >
+        <span data-menu-icon-open class="contents"><Icon name="menu" /></span>
+        <span data-menu-icon-close class="hidden"><Icon name="close" /></span>
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-menu"
+    aria-label="Principal (mobile)"
+    hidden
+    class="absolute inset-x-0 top-full border-b border-line bg-canvas shadow-lg lg:hidden"
+  >
+    <ul class="shell flex flex-col gap-1 py-4">
+      {
+        NAV_LINKS.map((link) => (
+          <li>
+            <a href={link.href} data-menu-link class="nav-link-mobile">
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class="mt-2 flex items-center gap-2 sm:hidden">
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="btn flex-1">
+          <Icon name="whatsapp" /> WhatsApp
+        </a>
+        <a
+          href={CONTACT_METHODS.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn flex-1"
+        >
+          <Icon name="linkedin" /> LinkedIn
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const menu = document.querySelector<HTMLElement>("#mobile-menu");
+  const iconOpen = document.querySelector<HTMLElement>("[data-menu-icon-open]");
+  const iconClose = document.querySelector<HTMLElement>("[data-menu-icon-close]");
+
+  const setOpen = (open: boolean) => {
+    if (!toggle || !menu) return;
+    menu.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+    iconOpen?.classList.toggle("hidden", open);
+    iconOpen?.classList.toggle("contents", !open);
+    iconClose?.classList.toggle("hidden", !open);
+  };
+
+  toggle?.addEventListener("click", () => setOpen(menu?.hidden !== false));
+
+  document
+    .querySelectorAll<HTMLAnchorElement>("[data-menu-link]")
+    .forEach((link) => link.addEventListener("click", () => setOpen(false)));
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as Node;
+    if (!menu || menu.hidden) return;
+    if (!menu.contains(target) && !toggle?.contains(target)) setOpen(false);
+  });
+
+  window.matchMedia("(min-width: 1024px)").addEventListener("change", (e) => {
+    if (e.matches) setOpen(false);
+  });
+</script>

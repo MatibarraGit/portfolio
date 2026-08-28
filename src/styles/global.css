@@ -1,6 +1,210 @@
 @import "tailwindcss";
 
-@theme {
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* TODO: TEMPLATE-TOKENS — valores de placeholder. Todo el diseño (colores,
+   bordes, radios, medidas) sale de estas variables: cambiándolas acá cambia
+   el sitio entero. No hardcodear valores en los componentes. */
+:root {
+  --tpl-canvas: #f5f5f4;
+  --tpl-surface: #e7e5e4;
+  --tpl-ink: #1c1917;
+  --tpl-muted: #57534e;
+  --tpl-line: #d6d3d1;
+  --tpl-accent: #2563eb;
+  --tpl-accent-2: #ea580c;
+
+  --tpl-radius: 0.75rem;
+  --tpl-border-width: 1px;
+  --tpl-header-h: 4rem;
+  --tpl-shell-max: 68rem;
+  --tpl-shell-width: 80%;
+}
+
+.dark {
+  --tpl-canvas: #0c0a09;
+  --tpl-surface: #1c1917;
+  --tpl-ink: #fafaf9;
+  --tpl-muted: #a8a29e;
+  --tpl-line: #292524;
+  --tpl-accent: #38bdf8;
+  --tpl-accent-2: #fb923c;
+}
+
+@media (width >= 64rem) {
+  :root {
+    --tpl-header-h: 5rem;
+  }
+}
+
+@theme inline {
   --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jet-brains), ui-monospace, monospace;
+
+  --color-canvas: var(--tpl-canvas);
+  --color-surface: var(--tpl-surface);
+  --color-ink: var(--tpl-ink);
+  --color-muted: var(--tpl-muted);
+  --color-line: var(--tpl-line);
+  --color-accent: var(--tpl-accent);
+  --color-accent-2: var(--tpl-accent-2);
+
+  --radius-tpl: var(--tpl-radius);
+  --spacing-header: var(--tpl-header-h);
+}
+
+@layer components {
+  /* Ancho común a todas las secciones: deja aire en los costados en pantallas
+     chicas y se topa contra --tpl-shell-max en desktop */
+  .shell {
+    margin-inline: auto;
+    width: var(--tpl-shell-width);
+    max-width: var(--tpl-shell-max);
+  }
+
+  /* Alto de viewport descontando el header sticky */
+  .section-viewport {
+    min-height: calc(100dvh - var(--tpl-header-h));
+  }
+
+  .surface-panel {
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--tpl-ink);
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+    cursor: pointer;
+    transition: opacity 150ms ease;
+  }
+
+  .btn:hover {
+    opacity: 0.8;
+  }
+
+  @media (width >= 40rem) {
+    .btn {
+      font-size: 1rem;
+    }
+  }
+
+  /* Botón principal (acento) */
+  .btn-accent {
+    color: var(--tpl-canvas);
+    background-color: var(--tpl-accent);
+    border-color: var(--tpl-accent);
+  }
+
+  /* Botón cuadrado sólo con ícono */
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--tpl-ink);
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+    cursor: pointer;
+    transition: opacity 150ms ease;
+  }
+
+  .btn-icon:hover {
+    opacity: 0.8;
+  }
+
+  .nav-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--tpl-muted);
+    transition: color 150ms ease;
+  }
+
+  .nav-link:hover {
+    color: var(--tpl-ink);
+  }
+
+  @media (width >= 80rem) {
+    .nav-link {
+      font-size: 1rem;
+    }
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+  }
+
+  /* Estira el link del título sobre toda la tarjeta: un solo link accesible
+     en vez de envolver la tarjeta entera y ensuciar el nombre del link */
+  .card-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--tpl-ink);
+    background-color: var(--tpl-canvas);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: calc(var(--tpl-radius) * 2);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--tpl-muted);
+    background-color: var(--tpl-canvas);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: calc(var(--tpl-radius) / 2);
+  }
+
+  .nav-link-mobile {
+    display: block;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--tpl-ink);
+    border-radius: var(--tpl-radius);
+    transition: background-color 150ms ease;
+  }
+
+  .nav-link-mobile:hover {
+    background-color: var(--tpl-surface);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

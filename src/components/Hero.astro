@@ -1,0 +1,100 @@
+---
+import { CONTACT_METHODS, HERO } from "../config/site";
+import Icon from "./Icon.astro";
+---
+
+<section id="top" class="shell section-viewport flex flex-col">
+  <div
+    class="flex flex-1 flex-col items-center justify-center gap-10 py-10 sm:gap-12 sm:py-12 lg:flex-row lg:justify-between lg:gap-16"
+  >
+    <div class="order-2 flex flex-col items-center text-center lg:order-1 lg:items-start lg:text-left">
+      <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl lg:text-5xl xl:text-6xl">
+        {HERO.greeting}{" "}
+        <span class="text-accent">{HERO.name}</span>
+      </h1>
+
+      <p class="mt-2 font-mono text-sm text-muted sm:text-base lg:text-lg">
+        {HERO.role}
+      </p>
+
+      <p class="mt-6 max-w-prose text-base leading-relaxed text-muted sm:mt-8 sm:text-lg">
+        {HERO.pitch}
+      </p>
+
+      <div
+        class="mt-8 flex w-full flex-col items-stretch gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:justify-start"
+      >
+        <a href={HERO.primaryCta.href} class="btn btn-accent">
+          {HERO.primaryCta.label}
+        </a>
+
+        <a href={HERO.whatsappUrl} target="_blank" rel="noopener noreferrer" class="btn">
+          <Icon name="whatsapp" />
+          WhatsApp
+        </a>
+
+        <a href={`mailto:${CONTACT_METHODS.email}`} class="btn">
+          <Icon name="mail" />
+          <span
+            data-typed-email
+            data-text={CONTACT_METHODS.email}
+            class="font-mono"
+            aria-label={CONTACT_METHODS.email}>{CONTACT_METHODS.email}</span
+          >
+        </a>
+      </div>
+    </div>
+
+    <div class="order-1 shrink-0 lg:order-2">
+      <div
+        class="surface-panel size-32 overflow-hidden rounded-full sm:size-40 lg:size-64 xl:size-72"
+      >
+        <img
+          src={HERO.avatar.src}
+          alt={HERO.avatar.alt}
+          width="512"
+          height="512"
+          loading="eager"
+          class="size-full object-cover"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="flex shrink-0 justify-center pb-6 sm:pb-8">
+    <a
+      href={HERO.scrollCue.href}
+      class="inline-flex items-center gap-2 text-sm font-medium text-accent transition-opacity hover:opacity-80 sm:text-base animate-bounce"
+    >
+      {HERO.scrollCue.label}
+      <Icon name="arrow-down" class="size-4 sm:size-5 " />
+    </a>
+  </div>
+</section>
+
+<script>
+  // El correo se tipea carácter por carácter. Ya viene renderizado en el HTML,
+  // así que si el usuario prefiere menos movimiento se deja como está.
+  const el = document.querySelector<HTMLElement>("[data-typed-email]");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (el && !reduced) {
+    const text = el.dataset.text ?? "";
+    const SPEED_MS = 70;
+
+    el.textContent = "";
+    el.classList.add("after:content-['_']", "after:animate-pulse");
+
+    let i = 0;
+    const type = () => {
+      el.textContent = text.slice(0, ++i);
+      if (i < text.length) {
+        window.setTimeout(type, SPEED_MS);
+      } else {
+        el.classList.remove("after:content-['_']", "after:animate-pulse");
+      }
+    };
+
+    type();
+  }
+</script>

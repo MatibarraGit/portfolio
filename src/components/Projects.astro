@@ -1,0 +1,42 @@
+---
+import { getCollection } from "astro:content";
+import ProjectCard from "./ProjectCard.astro";
+
+const projects = await getCollection("projects");
+
+// El glob loader usa el `slug` del frontmatter como id de la entrada, así que dos proyectos con el mismo slug colapsan en uno y el otro desaparece sin aviso: comparar archivos contra entradas cargadas es la forma de detectarlo
+const files = Object.keys(import.meta.glob("../content/projects/**/*.md"));
+
+if (files.length !== projects.length) {
+  throw new Error(
+    `La colección "projects" tiene ${files.length} archivos pero cargó ${projects.length} entradas. ` +
+      `Buscá el slug repetido entre: ${projects.map((p) => p.data.slug).join(", ")}`
+  );
+}
+
+const sorted = projects
+  .toSorted((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .toSorted((a, b) => Number(a.data.featured) - Number(b.data.featured));
+---
+
+<section id="proyectos" class="shell scroll-mt-header py-16 sm:py-20 lg:py-24">
+  <h2 class="text-2xl font-bold tracking-tight text-ink sm:text-3xl lg:text-4xl">Proyectos</h2>
+
+  <div class="mt-8 grid gap-6 sm:mt-10 md:grid-cols-2">
+    {
+      sorted.map(({ data }) => (
+        <ProjectCard
+          slug={data.slug}
+          title={data.title}
+          description={data.description}
+          tag={data.tag}
+          stack={data.stack}
+          image={data.image}
+          imageAlt={data.imageAlt}
+          imageWide={data.imageWide}
+          featured={data.featured}
+        />
+      ))
+    }
+  </div>
+</section>
