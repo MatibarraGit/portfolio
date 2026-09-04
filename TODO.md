@@ -1,0 +1,6 @@
+- [ ] Verificar redacción del proyecto del trombón
+- [ ] Hacer una demo del panel de administración
+- [ ] Redactar el proyecto del panel de administración
+- [ ] Cargar imágenes de todos los proyectos
+- [ ] Verificar el texto de toda la página creado por Claude
+- [ ] Hacer funcional el formulario de contacto

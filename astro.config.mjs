@@ -4,7 +4,7 @@ import { defineConfig, fontProviders } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 
 import sitemap from "@astrojs/sitemap";
-import { SITE_URL } from "./src/config/site";
+import { SITE_URL } from "./src/data/site";
 
 // https://astro.build/config
 export default defineConfig({

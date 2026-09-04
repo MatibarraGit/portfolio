@@ -2,17 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* TODO: TEMPLATE-TOKENS — valores de placeholder. Todo el diseño (colores,
-   bordes, radios, medidas) sale de estas variables: cambiándolas acá cambia
-   el sitio entero. No hardcodear valores en los componentes. */
 :root {
   --tpl-canvas: #f5f5f4;
   --tpl-surface: #e7e5e4;
   --tpl-ink: #1c1917;
-  --tpl-muted: #57534e;
+
+  --tpl-muted: #44403c;
   --tpl-line: #d6d3d1;
-  --tpl-accent: #2563eb;
-  --tpl-accent-2: #ea580c;
+  --tpl-accent: #1d4ed8;
+  --tpl-accent-2: #9a3412;
 
   --tpl-radius: 0.75rem;
   --tpl-border-width: 1px;
@@ -25,7 +23,7 @@
   --tpl-canvas: #0c0a09;
   --tpl-surface: #1c1917;
   --tpl-ink: #fafaf9;
-  --tpl-muted: #a8a29e;
+  --tpl-muted: #bcb7b3;
   --tpl-line: #292524;
   --tpl-accent: #38bdf8;
   --tpl-accent-2: #fb923c;
@@ -54,8 +52,7 @@
 }
 
 @layer components {
-  /* Ancho común a todas las secciones: deja aire en los costados en pantallas
-     chicas y se topa contra --tpl-shell-max en desktop */
+  /* Ancho común a todas las secciones: deja aire en los costados en pantallas chicas y se topa contra --tpl-shell-max en desktop */
   .shell {
     margin-inline: auto;
     width: var(--tpl-shell-width);
@@ -152,8 +149,7 @@
     border-radius: var(--tpl-radius);
   }
 
-  /* Estira el link del título sobre toda la tarjeta: un solo link accesible
-     en vez de envolver la tarjeta entera y ensuciar el nombre del link */
+  /* Estira el link del título sobre toda la tarjeta: un solo link accesible en vez de envolver la tarjeta entera y ensuciar el nombre del link */
   .card-link::after {
     content: "";
     position: absolute;
@@ -184,6 +180,203 @@
     border-radius: calc(var(--tpl-radius) / 2);
   }
 
+  /* Tarjeta de servicio. Se diferencia a propósito de `.card` (proyectos):
+     ahí manda la imagen sobre fondo `surface`; acá la tarjeta es calada
+     —fondo del canvas— y el peso visual lo llevan el ícono de acento y la
+     barra superior que se despliega en hover. */
+  .service-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
+    padding: 1.5rem;
+    background-color: var(--tpl-canvas);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+    transition:
+      border-color 200ms ease,
+      background-color 200ms ease;
+  }
+
+  .service-card::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    background-color: var(--tpl-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms ease;
+  }
+
+  .service-card:hover {
+    background-color: var(--tpl-surface);
+    border-color: var(--tpl-accent);
+  }
+
+  .service-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  @media (width >= 40rem) {
+    .service-card {
+      padding: 1.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-card,
+    .service-card::before {
+      transition: none;
+    }
+  }
+
+  .service-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--tpl-accent);
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: calc(var(--tpl-radius) * 1.25);
+    transition: background-color 200ms ease;
+  }
+
+  .service-card:hover .service-icon {
+    background-color: var(--tpl-canvas);
+  }
+
+  /* Numeración 01…04: da orden de lectura sin competir con el título */
+  .service-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--tpl-muted);
+  }
+
+  /* --- Proceso de trabajo -------------------------------------------------
+    Nada de tarjetas acá: los pasos son una línea de tiempo con riel a la
+    izquierda, para que se lean como una secuencia y no como opciones
+    intercambiables (que es lo que comunican las grillas de servicios). */
+  .process-step {
+    position: relative;
+    padding-left: 3.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .process-step:last-child {
+    padding-bottom: 0;
+  }
+
+  /* Riel que une un paso con el siguiente */
+  .process-step::before {
+    content: "";
+    position: absolute;
+    left: calc(1.25rem - var(--tpl-border-width) / 2);
+    top: 3rem;
+    bottom: 0.25rem;
+    width: var(--tpl-border-width);
+    background-color: var(--tpl-line);
+  }
+
+  .process-step:last-child::before {
+    display: none;
+  }
+
+  .process-marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--tpl-accent);
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: 9999px;
+  }
+
+  /* Dato al costado del título: plazo, costo, duración */
+  .process-timing {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--tpl-accent-2);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: calc(var(--tpl-radius) / 2);
+  }
+
+  /* --- Formulario --------------------------------------------------------- */
+  .field-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--tpl-muted);
+  }
+
+  .input {
+    display: block;
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--tpl-ink);
+    background-color: var(--tpl-canvas);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+  }
+
+  /* El placeholder se atenúa lo justo para leerse como pista y no como valor cargado; a 0.75 caía por debajo de AA en tema claro */
+  .input::placeholder {
+    color: var(--tpl-muted);
+    opacity: 0.85;
+  }
+
+  .input:focus-visible {
+    border-color: var(--tpl-accent);
+    outline: 2px solid var(--tpl-accent);
+    outline-offset: 1px;
+  }
+
+  textarea.input {
+    min-height: 8rem;
+    resize: vertical;
+  }
+
+  /* Fila de contacto directo: mismo lenguaje que `.btn` pero a lo ancho y con el dato (número, mail) alineado a la derecha */
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--tpl-ink);
+    background-color: var(--tpl-canvas);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+    transition: border-color 150ms ease;
+  }
+
+  .contact-row:hover {
+    border-color: var(--tpl-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-row {
+      transition: none;
+    }
+  }
+
   .nav-link-mobile {
     display: block;
     padding: 0.75rem;
@@ -196,6 +389,211 @@
 
   .nav-link-mobile:hover {
     background-color: var(--tpl-surface);
+  }
+
+  /* --- Detalle de proyecto ------------------------------------------------
+    La ficha de arriba (portada + título + metadatos) y el cuerpo renderado
+    desde el .md. El cuerpo no usa un plugin de tipografía: los .md tienen
+    un set acotado de elementos (h3, p, ul, tabla, links, código) y las
+    reglas de acá los atan a los mismos tokens que el resto del sitio. */
+
+  /* Fila de metadatos: fecha, tag y stack. Mono y atenuada para que el
+     título se quede con el peso visual. */
+  .project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--tpl-muted);
+  }
+
+  .project-meta > * {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
+  }
+
+  .project-blurb {
+    padding: 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--tpl-muted);
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+    border-left-width: 3px;
+    border-left-color: var(--tpl-accent);
+  }
+
+  @media (width >= 40rem) {
+    .project-blurb {
+      padding: 1.5rem;
+      font-size: 1rem;
+    }
+  }
+
+  .prose-project {
+    color: var(--tpl-muted);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+
+  @media (width >= 40rem) {
+    .prose-project {
+      font-size: 1rem;
+    }
+  }
+
+  .prose-project > * + * {
+    margin-top: 1rem;
+  }
+
+  .prose-project :is(h2, h3, h4) {
+    color: var(--tpl-accent);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .prose-project :is(h2, h3, h4) + * {
+    margin-top: 0.75rem;
+  }
+
+  .prose-project * + :is(h2, h3, h4) {
+    margin-top: 2.5rem;
+  }
+
+  .prose-project h2 {
+    font-size: 1.375rem;
+  }
+
+  .prose-project h3 {
+    font-size: 1.25rem;
+  }
+
+  .prose-project h4 {
+    font-size: 1.0625rem;
+  }
+
+  /* Los .md traen las secciones fijas del template (Mi rol, Problema base,
+     Impacto…) y no todos los proyectos completan todas. Un título sin nada
+     debajo —o sea, seguido de otro título o último del cuerpo— se oculta en
+     vez de dejar el hueco. */
+  .prose-project :is(h2, h3, h4):has(+ :is(h2, h3, h4)),
+  .prose-project > :is(h2, h3, h4):last-child {
+    display: none;
+  }
+
+  .prose-project :is(ul, ol) {
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .prose-project ul {
+    list-style: disc;
+  }
+
+  .prose-project ol {
+    list-style: decimal;
+  }
+
+  .prose-project li::marker {
+    color: var(--tpl-accent);
+  }
+
+  .prose-project :is(strong, b) {
+    color: var(--tpl-ink);
+    font-weight: 600;
+  }
+
+  .prose-project a {
+    color: var(--tpl-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .prose-project blockquote {
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-left: 3px solid var(--tpl-accent);
+    color: var(--tpl-muted);
+    font-style: italic;
+  }
+
+  .prose-project :not(pre) > code {
+    padding: 0.125rem 0.375rem;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--tpl-accent-2);
+    background-color: var(--tpl-surface);
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: calc(var(--tpl-radius) / 2);
+  }
+
+  .prose-project pre {
+    overflow-x: auto;
+    padding: 1rem;
+    font-size: 0.8125rem;
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+  }
+
+  .prose-project img {
+    width: 100%;
+    height: auto;
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+  }
+
+  .prose-project hr {
+    border: 0;
+    border-top: var(--tpl-border-width) solid var(--tpl-line);
+  }
+
+  /* La tabla de tecnologías no entra en mobile. `display: block` + `overflow`
+     le da su propio scroll horizontal para que no empuje el ancho de la
+     página; `width: max-content` evita que colapse en desktop. */
+  .prose-project table {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    border: var(--tpl-border-width) solid var(--tpl-line);
+    border-radius: var(--tpl-radius);
+  }
+
+  .prose-project thead {
+    background-color: var(--tpl-surface);
+  }
+
+  .prose-project th {
+    padding: 0.625rem 0.875rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--tpl-ink);
+    border-bottom: var(--tpl-border-width) solid var(--tpl-line);
+  }
+
+  .prose-project td {
+    padding: 0.625rem 0.875rem;
+    vertical-align: top;
+    border-bottom: var(--tpl-border-width) solid var(--tpl-line);
+  }
+
+  .prose-project tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .prose-project td:first-child {
+    font-family: var(--font-mono);
+    color: var(--tpl-ink);
+    white-space: nowrap;
   }
 }
 

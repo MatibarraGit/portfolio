@@ -1,0 +1,112 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Header from "../../components/Header.astro";
+import Icon from "../../components/Icon.astro";
+import Layout from "../../layouts/Layout.astro";
+import { TITLE } from "../../data/site";
+
+// El glob loader toma el `slug` del frontmatter como id de la entrada, así que
+// el parámetro de la ruta es ese mismo slug y `/proyectos/<slug>` coincide con
+// los links de `ProjectCard`.
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+
+  return projects.map((project) => ({
+    params: { id: project.data.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const dateLabel = data.date.toLocaleDateString("es-AR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+const dateTime = data.date.toISOString().slice(0, 10);
+
+const cover = data.imageWide ?? data.image;
+---
+
+<Layout title={`${data.title} | ${TITLE}`} description={data.description}>
+  <Header />
+
+  <main class="shell py-10 sm:py-14 lg:py-16">
+    <a
+      href="/#proyectos"
+      class="inline-flex items-center gap-2 font-mono text-sm text-muted transition-colors hover:text-accent"
+    >
+      <Icon name="arrow-left" class="size-4" />
+      Volver a proyectos
+    </a>
+
+    <article class="mt-8 sm:mt-10">
+      {/* Ficha: portada a la izquierda y título + metadatos a la derecha. En
+          mobile la portada va arriba, a lo ancho. */}
+      <header class="grid gap-6 sm:grid-cols-[minmax(0,14rem)_1fr] sm:items-start sm:gap-8">
+        <img
+          src={cover}
+          alt={data.imageAlt}
+          width="1280"
+          height="720"
+          class="w-full rounded-tpl border border-line object-cover aspect-video"
+        />
+
+        <div class="flex flex-col gap-4">
+          <h1 class="text-2xl font-bold tracking-tight text-accent sm:text-3xl lg:text-4xl">
+            {data.title}
+          </h1>
+
+          <div class="project-meta text-ink">
+            <span>
+              <Icon name="calendar" class="size-4 shrink-0" />
+              <time datetime={dateTime}>{dateLabel}</time>
+            </span>
+
+            <span>
+              <Icon name="tag" class="size-4 shrink-0" />
+              {data.tag}
+            </span>
+
+            <span>
+              <Icon name="stack" class="size-4 shrink-0" />
+              <span class="min-w-0">{data.stack.join(", ")}</span>
+            </span>
+          </div>
+
+          {
+            data.demo_url && (
+              <a
+                href={data.demo_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-accent self-start"
+              >
+                Ver demo
+                <Icon name="external" class="size-4" />
+              </a>
+            )
+          }
+        </div>
+      </header>
+
+      <p class="project-blurb mt-8 sm:mt-10 text-ink">{data.description}</p>
+
+      {/* Cuerpo del .md: las secciones y su orden los define cada archivo de `content/projects`, no esta página. */}
+      <div class="prose-project mt-10 sm:mt-12 text-ink">
+        <Content />
+      </div>
+
+      <ul class="mt-10 flex flex-wrap gap-2 sm:mt-12">
+        {data.stack.map((tech) => <li class="chip">{tech}</li>)}
+      </ul>
+    </article>
+  </main>
+</Layout>

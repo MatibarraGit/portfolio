@@ -1,6 +1,8 @@
 ---
+import type { IconName } from "../types";
+
 interface Props {
-  name: "whatsapp" | "linkedin" | "github" | "mail" | "sun" | "moon" | "menu" | "close" | "arrow-down";
+  name: IconName;
   class?: string;
 }
 
@@ -69,6 +71,98 @@ const { name, class: className = "size-5" } = Astro.props;
   name === "arrow-down" && (
     <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M12 5v14M19 12l-7 7-7-7" />
+    </svg>
+  )
+}
+
+{
+  name === "dashboard" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M3 9h18M9 21V9" />
+    </svg>
+  )
+}
+{
+  name === "storefront" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 4h16l1.2 4.2a3 3 0 0 1-5.85 1.3 3 3 0 0 1-5.7 0 3 3 0 0 1-5.85-1.3Z" />
+      <path d="M4.5 10.5V20h15v-9.5" />
+      <path d="M9.5 20v-5.5h5V20" />
+    </svg>
+  )
+}
+{
+  name === "server" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="7" rx="2" />
+      <rect x="3" y="14" width="18" height="7" rx="2" />
+      <path d="M7 6.5h.01M7 17.5h.01" />
+    </svg>
+  )
+}
+{
+  name === "spark" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z" />
+      <path d="M18 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z" />
+    </svg>
+  )
+}
+
+{
+  name === "chat" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12a8 8 0 0 1-11.5 7.2L3.5 21l1.8-6A8 8 0 1 1 21 12Z" />
+      <path d="M8.5 11h.01M12 11h.01M15.5 11h.01" />
+    </svg>
+  )
+}
+{
+  name === "clock" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5.2l3.2 1.9" />
+    </svg>
+  )
+}
+{
+  name === "calendar" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
+    </svg>
+  )
+}
+{
+  name === "tag" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 3h7.6l10.4 10.4-7.6 7.6L3 10.6Z" />
+      <path d="M7.5 7.5h.01" />
+    </svg>
+  )
+}
+{
+  name === "stack" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="m12 3 9 5-9 5-9-5Z" />
+      <path d="m3 13 9 5 9-5" />
+    </svg>
+  )
+}
+{
+  name === "arrow-left" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  )
+}
+{
+  name === "external" && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M14 4h6v6" />
+      <path d="M20 4 11 13" />
+      <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
     </svg>
   )
 }

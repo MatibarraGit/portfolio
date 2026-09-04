@@ -1,0 +1,193 @@
+---
+import { CONTACT_DIRECT, CONTACT_FORM, CONTACT_SECTION } from "../data/contact";
+import { CONTACT_METHODS } from "../data/site";
+import Icon from "./Icon.astro";
+
+const { fields } = CONTACT_FORM;
+
+const directMethods = [
+  { ...CONTACT_DIRECT.whatsapp, icon: "whatsapp" as const, external: true },
+  { ...CONTACT_DIRECT.email, icon: "mail" as const, external: false },
+  { ...CONTACT_DIRECT.linkedin, icon: "linkedin" as const, external: true },
+];
+---
+
+<section id={CONTACT_SECTION.id} class="shell scroll-mt-header py-16 sm:py-20 lg:py-24">
+  <h2 class="text-2xl font-bold tracking-tight text-ink sm:text-3xl lg:text-4xl">
+    {CONTACT_SECTION.title}
+  </h2>
+
+  <p class="mt-3 max-w-prose text-sm leading-relaxed text-muted sm:mt-4 sm:text-base">
+    {CONTACT_SECTION.intro}
+  </p>
+
+  <div class="mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-12">
+    <form
+      data-contact-form
+      data-endpoint={CONTACT_FORM.endpoint}
+      data-mailto={CONTACT_METHODS.email}
+      method="post"
+      action={CONTACT_FORM.endpoint || undefined}
+      class="surface-panel flex flex-col gap-5 p-5 sm:p-6"
+    >
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label class="field-label" for="contacto-nombre">{fields.name.label}</label>
+          <input
+            id="contacto-nombre"
+            class="input"
+            type="text"
+            name={fields.name.name}
+            placeholder={fields.name.placeholder}
+            autocomplete={fields.name.autocomplete}
+            maxlength={fields.name.maxlength}
+            required
+          />
+        </div>
+
+        <div>
+          <label class="field-label" for="contacto-email">{fields.email.label}</label>
+          <input
+            id="contacto-email"
+            class="input"
+            type="email"
+            name={fields.email.name}
+            placeholder={fields.email.placeholder}
+            autocomplete={fields.email.autocomplete}
+            maxlength={fields.email.maxlength}
+            required
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="field-label" for="contacto-mensaje">{fields.message.label}</label>
+        <textarea
+          id="contacto-mensaje"
+          class="input"
+          name={fields.message.name}
+          placeholder={fields.message.placeholder}
+          maxlength={fields.message.maxlength}
+          rows="5"
+          required></textarea>
+      </div>
+
+      {/* Trampa para bots: invisible y fuera del tab order. Si viene llena, se descarta el envío */}
+      <div hidden aria-hidden="true">
+        <label>
+          No completar
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <button type="submit" class="btn btn-accent" data-form-submit>
+          {CONTACT_FORM.submit.idle}
+        </button>
+
+        <p data-form-status role="status" aria-live="polite" class="text-sm text-muted"></p>
+      </div>
+    </form>
+
+    <aside class="flex flex-col gap-3">
+      <div>
+        <h3 class="text-base font-bold text-ink sm:text-lg">{CONTACT_DIRECT.title}</h3>
+        <p class="mt-1 text-sm text-muted">{CONTACT_DIRECT.description}</p>
+      </div>
+
+      {
+        directMethods.map((method) => (
+          <a
+            href={method.href}
+            target={method.external ? "_blank" : undefined}
+            rel={method.external ? "noopener noreferrer" : undefined}
+            class="contact-row"
+          >
+            <Icon name={method.icon} class="size-5 shrink-0 text-accent" />
+            <span class="min-w-0">
+              <span class="block text-sm font-medium">{method.label}</span>
+              <span class="block truncate font-mono text-xs text-muted">{method.detail}</span>
+            </span>
+          </a>
+        ))
+      }
+    </aside>
+  </div>
+</section>
+
+<script>
+  import { CONTACT_FORM } from "../data/contact";
+
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  const status = form?.querySelector<HTMLElement>("[data-form-status]");
+  const submit = form?.querySelector<HTMLButtonElement>("[data-form-submit]");
+
+  const setStatus = (message: string, kind: "ok" | "error" | "") => {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle("text-accent", kind === "ok");
+    status.classList.toggle("text-accent-2", kind === "error");
+    status.classList.toggle("text-muted", kind === "");
+  };
+
+  // El evento `submit` solo se dispara si la validación nativa pasó, así que
+  // acá los campos requeridos ya están completos
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const data = new FormData(form);
+
+    // Honeypot: los bots completan todos los campos, incluido el oculto
+    if (data.get("_gotcha")) {
+      setStatus(CONTACT_FORM.status.success, "ok");
+      form.reset();
+      return;
+    }
+    data.delete("_gotcha");
+
+    const endpoint = form.dataset.endpoint;
+
+    // Sin servicio de formularios configurado el sitio es estático y no hay
+    // dónde postear: se arma un mail prellenado con lo que escribió el visitante
+    if (!endpoint) {
+      const name = String(data.get("nombre") ?? "");
+      const email = String(data.get("email") ?? "");
+      const message = String(data.get("mensaje") ?? "");
+      const subject = `Consulta desde el portfolio — ${name}`;
+      const body = `${message}\n\n—\n${name}\n${email}`;
+
+      window.location.href =
+        `mailto:${form.dataset.mailto}` +
+        `?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      setStatus(CONTACT_FORM.status.mailto, "ok");
+      return;
+    }
+
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = CONTACT_FORM.submit.sending;
+    }
+    setStatus("", "");
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) throw new Error(String(response.status));
+
+      form.reset();
+      setStatus(CONTACT_FORM.status.success, "ok");
+    } catch {
+      setStatus(CONTACT_FORM.status.error, "error");
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = CONTACT_FORM.submit.idle;
+      }
+    }
+  });
+</script>

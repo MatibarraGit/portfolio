@@ -78,6 +78,7 @@ export const CONTACT_METHODS = {
 export const NAV_LINKS = [
   { href: "#servicios", label: "Servicios" },
   { href: "#proyectos", label: "Proyectos" },
+  { href: "#proceso", label: "Proceso" },
   { href: "#sobre-mi", label: "Sobre mí" },
   { href: "#contacto", label: "Contacto" },
 ];

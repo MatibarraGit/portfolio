@@ -1,0 +1,43 @@
+---
+import { ABOUT_SECTION } from "../data/about";
+---
+
+<section id={ABOUT_SECTION.id} class="shell scroll-mt-header py-16 sm:py-20 lg:py-24">
+  <h2 class="text-2xl font-bold tracking-tight text-ink sm:text-3xl lg:text-4xl">
+    {ABOUT_SECTION.title}
+  </h2>
+
+  <div class="mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-12">
+    <div class="surface-panel -order-1 mx-auto w-full max-w-72 overflow-hidden lg:order-none lg:max-w-none">
+      <img
+        src={ABOUT_SECTION.image.src}
+        alt={ABOUT_SECTION.image.alt}
+        width="800"
+        height="1000"
+        loading="lazy"
+        class="aspect-4/5 w-full object-cover"
+      />
+    </div>
+
+    <div class="min-w-0">
+      <div class="flex flex-col gap-4">
+        {
+          ABOUT_SECTION.paragraphs.map((paragraph) => (
+            <p class="max-w-prose text-sm leading-relaxed text-muted sm:text-base">{paragraph}</p>
+          ))
+        }
+      </div>
+
+      <dl class="mt-8 grid gap-4 border-t border-line pt-6 sm:grid-cols-3">
+        {
+          ABOUT_SECTION.highlights.map((highlight) => (
+            <div>
+              <dt class="font-mono text-xs text-muted">{highlight.label}</dt>
+              <dd class="mt-1 text-sm font-medium text-ink sm:text-base">{highlight.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>

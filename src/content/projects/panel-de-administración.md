@@ -1,6 +1,6 @@
 ---
 # TODO: TEMPLATE-CONTENT proyecto de ejemplo, reemplazar por uno real
-slug: automatizacion-busquedas-multifuente
+slug: panel-de-adminstracion
 title: Automatización de búsquedas multifuente
 description: Solución backend en Python para la automatización de búsquedas de ítems a través de múltiples fuentes de datos.
 tag: Backend
@@ -12,7 +12,7 @@ stack:
 # TODO: TEMPLATE-IMAGE portada real del proyecto (16:9, con la marca centrada)
 image: https://placehold.co/1280x720
 imageAlt: Portada del proyecto de búsquedas multifuente
-date: 02-08-2025
+date: 14-02-2025
 ---
 
 ### Mi rol
